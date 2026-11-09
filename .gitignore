@@ -1,0 +1,53 @@
+# Android Studio
+.idea/
+*.iml
+
+# Gradle, Kotlin and build output in all modules
+.gradle/
+.kotlin/
+build/
+
+# Local Android SDK configuration
+local.properties
+
+# Generated Android and native build files
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# Local signing files
+*.jks
+*.keystore
+key.properties
+keystore.properties
+
+# Logs, heap dumps and operating system metadata
+*.log
+*.hprof
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local notes, lab reports and design references
+*.md
+*.pdf
+*.fig
+/docs/
+/output/
+/tmp/
+
+# Screenshots and exported images
+screenshots/
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+
+# Keep resources and assets that are packaged with the Android app
+!**/src/**/res/**
+!**/src/**/assets/**
