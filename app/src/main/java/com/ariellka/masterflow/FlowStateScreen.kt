@@ -25,7 +25,8 @@ fun FlowStateScreen(
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
     timeoutError: Boolean = false,
-    showPrimaryAction: Boolean = true
+    showPrimaryAction: Boolean = true,
+    showBackButton: Boolean = true
 ) {
     val loading = state == AppLinks.LOADING
     val empty = state == AppLinks.EMPTY
@@ -54,8 +55,6 @@ fun FlowStateScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(FlowSpace.large)
             ) {
-                Text(stringResource(R.string.app_name), style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.secondary)
                 Surface(
                     modifier = Modifier.size(FlowSpace.illustration), shape = FlowCorners.navigation,
                     color = if (loading || empty) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.errorContainer
@@ -83,6 +82,6 @@ fun FlowStateScreen(
                 }
             }
         }
-        if (!loading) BackButton(onBack)
+        if (!loading && showBackButton) BackButton(onBack)
     }
 }

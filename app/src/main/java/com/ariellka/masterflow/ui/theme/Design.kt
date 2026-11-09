@@ -4,6 +4,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Shapes
 import androidx.compose.ui.unit.dp
 
+// Switch to scrolling and icon-only navigation at 150% text size.
+const val LARGE_FONT_SCALE = 1.5f
+
 object FlowSpace {
     val tiny = 4.dp
     val small = 8.dp

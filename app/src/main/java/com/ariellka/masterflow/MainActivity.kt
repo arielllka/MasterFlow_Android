@@ -22,15 +22,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         incomingLink = intent.dataString
         val preferences = getSharedPreferences("masterflow", MODE_PRIVATE)
-        val dashboard = ViewModelProvider(this)[DashboardViewModel::class.java]
-        dashboard.loadOnce()
+        val dashboard = ViewModelProvider(this, DashboardViewModel.Factory)[DashboardViewModel::class.java]
         setContent {
-            MasterFlowApp(
+            DashboardRoute(
+                viewModel = dashboard,
                 initialLink = incomingLink,
                 linkVersion = incomingLinkVersion,
                 onExit = { finish() },
-                dashboardState = dashboard.state,
-                onRefresh = { dashboard.refresh() },
                 initialThemeMode = preferences.getString("theme", "system") ?: "system",
                 onThemeChanged = { preferences.edit().putString("theme", it).apply() },
                 onDarkThemeChanged = { dark ->
@@ -53,7 +51,8 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        incomingLink = intent.dataString
+        val link = intent.dataString ?: return
+        incomingLink = link
         incomingLinkVersion++
         Log.d("MasterFlow", "Новая ссылка: ${intent.data}")
     }

@@ -11,18 +11,18 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class DashboardLoadingTest {
-    private fun awaitResult(model: DashboardViewModel): DashboardState {
+    private fun awaitResult(model: DashboardViewModel): DashboardUiState {
         val deadline = SystemClock.uptimeMillis() + 5_000
-        while (model.state == DashboardState.Loading && SystemClock.uptimeMillis() < deadline) {
+        while (model.uiState.value.status == DashboardStatus.LOADING && SystemClock.uptimeMillis() < deadline) {
             SystemClock.sleep(20)
         }
-        return model.state
+        return model.uiState.value
     }
 
     @Test fun successfulEmptyResultBecomesEmpty() {
         val model = DashboardViewModel(loadRecords = { emptyList() }, loadingDelayMillis = 0)
         InstrumentationRegistry.getInstrumentation().runOnMainSync { model.refresh() }
-        assertEquals(DashboardState.Empty, awaitResult(model))
+        assertEquals(DashboardStatus.EMPTY, awaitResult(model).status)
     }
 
     @Test fun slowLoadTimesOutAndRetryCanRecover() {
@@ -32,9 +32,11 @@ class DashboardLoadingTest {
             loadingDelayMillis = 0, timeoutMillis = 200
         )
         InstrumentationRegistry.getInstrumentation().runOnMainSync { model.refresh() }
-        assertEquals(DashboardState.Error(timedOut = true), awaitResult(model))
+        val failure = awaitResult(model)
+        assertEquals(DashboardStatus.ERROR, failure.status)
+        assertTrue(failure.timedOut)
         InstrumentationRegistry.getInstrumentation().runOnMainSync { slow = false; model.refresh() }
-        assertTrue(awaitResult(model) is DashboardState.Content)
+        assertEquals(DashboardStatus.CONTENT, awaitResult(model).status)
     }
 
     @Test fun failedLoadBecomesError() {
@@ -42,6 +44,8 @@ class DashboardLoadingTest {
             loadRecords = { throw IllegalStateException("Test load failure") }, loadingDelayMillis = 0
         )
         InstrumentationRegistry.getInstrumentation().runOnMainSync { model.refresh() }
-        assertEquals(DashboardState.Error(), awaitResult(model))
+        val failure = awaitResult(model)
+        assertEquals(DashboardStatus.ERROR, failure.status)
+        assertTrue(!failure.timedOut)
     }
 }

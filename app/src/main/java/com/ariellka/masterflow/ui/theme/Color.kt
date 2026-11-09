@@ -4,6 +4,8 @@ import androidx.compose.ui.graphics.Color
 
 // Colours sampled from the supplied Figma reference, with a matching dark palette.
 val FlowBlue = Color(0xFF98B2CE)
+
+val Green = Color(0xFF228B22)
 val FlowInk = Color(0xFF292334)
 val FlowBackground = Color(0xFFF8F5FF)
 val FlowCard = Color(0xFFE5DDE5)
