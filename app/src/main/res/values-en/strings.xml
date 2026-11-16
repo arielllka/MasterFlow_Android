@@ -1,15 +1,8 @@
 
 <resources>
     <string name="app_name">Master Flow</string>
-    <string name="my_tasks">Tasks</string>
-    <string name="task_1">Task 1</string>
-    <string name="task_2">Task 2</string>
-    <string name="task_3">Task 3</string>
-    <string name="task_not_found">Task not found</string>
     <string name="invalid_link">Invalid link</string>
-    <string name="back_to_tasks">Back to Home</string>
     <string name="back">Back</string>
-    <string name="share_task">Share Task</string>
     <string name="share">Share</string>
     <string name="share_app">Share App</string>
     <string name="home">Home</string>
@@ -22,7 +15,6 @@
     <string name="today_schedule">Today\'s Schedule</string>
     <string name="view_all">View All</string>
     <string name="appointment_service">%1$s · %2$d min</string>
-    <string name="task_count">Total: %1$d</string>
     <string name="schedule">Schedule</string>
     <string name="clients">Clients</string>
     <string name="services">Services</string>
@@ -36,7 +28,7 @@
     <string name="error_title">Couldn\'t Load Your Day</string>
     <string name="error_message">Unable to load data.\nPlease try again or return to the home screen.</string>
     <string name="invalid_title">Link Not Found</string>
-    <string name="invalid_message">This link has expired or points to an unknown task. You can return to the home screen using the button below.</string>
+    <string name="invalid_message">Check the link address or return to the home screen.</string>
     <string name="go_home">Go to Home</string>
     <string name="retry">Try Again</string>
     <string name="refresh">Refresh Data</string>
@@ -47,4 +39,18 @@
     <string name="clear_search">Clear search</string>
     <string name="search_no_results">No appointments found</string>
     <string name="search_no_results_message">Try another name or clear the search.</string>
+    <string name="appointment_details">Appointment Details</string>
+    <string name="appointment_number">Appointment #%1$d</string>
+    <string name="appointment_not_found">Appointment Not Found</string>
+    <string name="appointment_not_found_message">This appointment is no longer in the schedule. Return to the list and choose another one.</string>
+    <string name="detail_loading_title">Loading Appointment</string>
+    <string name="detail_loading_message">Getting the appointment information.</string>
+    <string name="detail_error_title">Couldn\'t Load Appointment</string>
+    <string name="detail_error_message">Please try loading the data again.</string>
+    <string name="detail_service">Service</string>
+    <string name="detail_date">Date</string>
+    <string name="detail_time">Time</string>
+    <string name="detail_duration">Duration</string>
+    <string name="detail_price">Price</string>
+    <string name="duration_minutes">%1$d min</string>
 </resources>

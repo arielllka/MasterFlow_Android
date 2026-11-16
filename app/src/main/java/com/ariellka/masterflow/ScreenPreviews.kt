@@ -19,6 +19,12 @@ private fun SchedulePreview() {
     MasterFlowApp(AppLinks.SCHEDULE_LINK, 0, {}, previewDashboardState, {})
 }
 
+@Preview(name = "Запись клиента", group = "План", widthDp = 412, heightDp = 917)
+@Composable
+private fun AppointmentDetailPreview() {
+    MasterFlowApp(AppLinks.appointmentLink(42), 0, {}, previewDashboardState, {})
+}
+
 @Preview(name = "Загрузка", group = "Состояния", widthDp = 412, heightDp = 917)
 @Composable
 private fun LoadingPreview() {

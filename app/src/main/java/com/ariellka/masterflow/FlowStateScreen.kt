@@ -1,5 +1,6 @@
 package com.ariellka.masterflow
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -26,22 +27,27 @@ fun FlowStateScreen(
     modifier: Modifier = Modifier,
     timeoutError: Boolean = false,
     showPrimaryAction: Boolean = true,
-    showBackButton: Boolean = true
+    showBackButton: Boolean = true,
+    @StringRes titleResId: Int? = null,
+    @StringRes messageResId: Int? = null
 ) {
     val loading = state == AppLinks.LOADING
     val empty = state == AppLinks.EMPTY
     val invalid = state == AppLinks.INVALID
-    val title = when {
+    val missing = state == AppLinks.NOT_FOUND
+    val title = titleResId ?: when {
         loading -> R.string.loading_title
         empty -> R.string.empty_title
         invalid -> R.string.invalid_title
+        missing -> R.string.appointment_not_found
         else -> R.string.error_title
     }
-    val message = when {
+    val message = messageResId ?: when {
         timeoutError -> R.string.timeout_message
         loading -> R.string.loading_message
         empty -> R.string.empty_message
         invalid -> R.string.invalid_message
+        missing -> R.string.appointment_not_found_message
         else -> R.string.error_message
     }
     Column(modifier.fillMaxSize().testTag("state-$state").padding(FlowSpace.page)) {
@@ -73,7 +79,7 @@ fun FlowStateScreen(
                     CircularProgressIndicator(color = MaterialTheme.colorScheme.secondary)
                 } else if (showPrimaryAction) {
                     Button(
-                        onClick = if (invalid) onBack else onRetry,
+                        onClick = onRetry,
                         shape = FlowCorners.button,
                         modifier = Modifier.fillMaxWidth().heightIn(min = FlowSpace.button).testTag("state-action")
                     ) {

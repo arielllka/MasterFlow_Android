@@ -1,6 +1,5 @@
 package com.ariellka.masterflow
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -11,6 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.painterResource
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.ui.NavDisplay
 import com.ariellka.masterflow.ui.theme.FlowSpace
 import com.ariellka.masterflow.ui.theme.MasterFlowTheme
 
@@ -27,101 +29,109 @@ fun MasterFlowApp(
     onDarkThemeChanged: (Boolean) -> Unit = {},
     onExit: () -> Unit = {}
 ) {
-    var destination by rememberSaveable { mutableStateOf(AppLinks.resolve(initialLink)) }
-    var previousDestination by rememberSaveable { mutableStateOf(AppLinks.HOME) }
+    val backStack = rememberNavBackStack(*initialBackStack(initialLink).toTypedArray())
+    val destination = backStack.lastOrNull() as? AppDestination ?: AppDestination.Home
     var showMore by rememberSaveable { mutableStateOf(false) }
     var themeMode by rememberSaveable { mutableStateOf(initialThemeMode) }
     val darkTheme = if (themeMode == "system") isSystemInDarkTheme() else themeMode == "dark"
     val homeListState = rememberLazyListState()
     val scheduleListState = rememberLazyListState()
-    val goHome = { destination = AppLinks.HOME; showMore = false }
+    val goHome = { backStack.navigateTo(AppDestination.Home); showMore = false }
     val goBack = {
-        destination = when (destination) {
-            AppLinks.SCHEDULE, AppLinks.INVALID -> AppLinks.HOME
-            else -> previousDestination
-        }
+        if (!backStack.popDestination()) onExit()
         showMore = false
     }
 
     SideEffect { onDarkThemeChanged(darkTheme) }
     LaunchedEffect(uiState.pendingNavigation?.id) {
         uiState.pendingNavigation?.let { event ->
-            previousDestination = if (destination == AppLinks.SCHEDULE) AppLinks.SCHEDULE else AppLinks.HOME
-            destination = event.destination
+            backStack.navigateTo(event.destination)
             showMore = false
             onAction(DashboardAction.NavigationHandled(event.id))
         }
     }
     LaunchedEffect(linkVersion) {
         if (linkVersion > 0) {
-            destination = AppLinks.resolve(initialLink)
-            previousDestination = AppLinks.HOME
+            backStack.openLink(initialLink)
             showMore = false
         }
     }
-    BackHandler(enabled = destination != AppLinks.HOME, onBack = goBack)
 
     MasterFlowTheme(darkTheme = darkTheme) {
-        val visibleDestination = if (destination == AppLinks.HOME) {
-            when (uiState.status) {
-                DashboardStatus.LOADING -> AppLinks.LOADING
-                DashboardStatus.EMPTY -> AppLinks.EMPTY
-                DashboardStatus.ERROR -> AppLinks.ERROR
-                DashboardStatus.CONTENT -> AppLinks.HOME
-            }
-        } else destination
-
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             contentWindowInsets = WindowInsets.safeDrawing,
             containerColor = MaterialTheme.colorScheme.background,
             bottomBar = {
-                if (visibleDestination == AppLinks.HOME || destination == AppLinks.SCHEDULE) {
-                    FlowBottomBar(selectedDestination = destination) { target ->
-                        if (target == "more") showMore = true
-                        else onAction(DashboardAction.OpenScreen(target))
-                    }
+                if ((destination == AppDestination.Home && uiState.status == DashboardStatus.CONTENT) ||
+                    destination == AppDestination.Schedule) {
+                    FlowBottomBar(
+                        selectedDestination = destination,
+                        onNavigate = { onAction(DashboardAction.OpenScreen(it)) },
+                        onMore = { showMore = true }
+                    )
                 }
             }
         ) { padding ->
             val screenModifier = Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)
-            when {
-                destination == AppLinks.SCHEDULE -> ScheduleScreen(
-                    uiState = uiState,
-                    onAction = onAction,
-                    onBack = goHome,
-                    listState = scheduleListState,
-                    modifier = screenModifier.testTag("schedule-screen")
-                )
-                visibleDestination == AppLinks.LOADING -> FlowStateScreen(AppLinks.LOADING, goHome, {}, screenModifier)
-                visibleDestination == AppLinks.ERROR -> FlowStateScreen(
-                    AppLinks.ERROR, onExit, { onAction(DashboardAction.Retry) }, screenModifier,
-                    timeoutError = uiState.timedOut
-                )
-                visibleDestination == AppLinks.EMPTY -> FlowStateScreen(
-                    AppLinks.EMPTY, onExit,
-                    { onAction(DashboardAction.OpenScreen("new-appointment")) }, screenModifier
-                )
-                destination == AppLinks.HOME -> MainScreen(
-                    uiState = uiState,
-                    onAction = onAction,
-                    modifier = screenModifier.testTag("home-screen"),
-                    onShare = onShare,
-                    onToggleTheme = {
-                        themeMode = if (darkTheme) "light" else "dark"
-                        onThemeChanged(themeMode)
-                    },
-                    darkTheme = darkTheme, listState = homeListState
-                )
-                destination == AppLinks.INVALID ->
-                    FlowStateScreen(AppLinks.INVALID, goHome, goHome, screenModifier)
-                destination.startsWith("task/") -> Box(screenModifier.testTag(destination.replace('/', '-'))) {
-                    FlowStateScreen(AppLinks.EMPTY, goBack, {}, showPrimaryAction = false)
+            NavDisplay(
+                backStack = backStack,
+                modifier = screenModifier,
+                onBack = goBack,
+                entryProvider = entryProvider {
+                    entry<AppDestination.Home> {
+                        when (uiState.status) {
+                            DashboardStatus.LOADING -> FlowStateScreen(AppLinks.LOADING, onExit, {})
+                            DashboardStatus.ERROR -> FlowStateScreen(
+                                AppLinks.ERROR, onExit, { onAction(DashboardAction.Retry) },
+                                timeoutError = uiState.timedOut
+                            )
+                            DashboardStatus.EMPTY -> FlowStateScreen(
+                                AppLinks.EMPTY, onExit,
+                                { onAction(DashboardAction.OpenScreen(AppDestination.NewAppointment)) }
+                            )
+                            DashboardStatus.CONTENT -> MainScreen(
+                                uiState = uiState,
+                                onAction = onAction,
+                                modifier = Modifier.fillMaxSize().testTag("home-screen"),
+                                onShare = onShare,
+                                onToggleTheme = {
+                                    themeMode = if (darkTheme) "light" else "dark"
+                                    onThemeChanged(themeMode)
+                                },
+                                darkTheme = darkTheme,
+                                listState = homeListState
+                            )
+                        }
+                    }
+                    entry<AppDestination.Schedule> {
+                        ScheduleScreen(uiState, onAction, goBack,
+                            Modifier.fillMaxSize().testTag("schedule-screen"), scheduleListState)
+                    }
+                    entry<AppDestination.Detail> { key ->
+                        AppointmentDetailScreen(key.appointmentId, uiState, goBack,
+                            { onAction(DashboardAction.Retry) })
+                    }
+                    entry<AppDestination.Clients> {
+                        Box(Modifier.fillMaxSize().testTag("placeholder-clients")) {
+                            FlowStateScreen(AppLinks.EMPTY, goBack, {}, showPrimaryAction = false)
+                        }
+                    }
+                    entry<AppDestination.Services> {
+                        Box(Modifier.fillMaxSize().testTag("placeholder-services")) {
+                            FlowStateScreen(AppLinks.EMPTY, goBack, {}, showPrimaryAction = false)
+                        }
+                    }
+                    entry<AppDestination.NewAppointment> {
+                        Box(Modifier.fillMaxSize().testTag("placeholder-new-appointment")) {
+                            FlowStateScreen(AppLinks.EMPTY, goBack, {}, showPrimaryAction = false)
+                        }
+                    }
+                    entry<AppDestination.InvalidLink> {
+                        FlowStateScreen(AppLinks.INVALID, goBack, goHome)
+                    }
                 }
-                else -> Box(screenModifier.testTag("placeholder-$destination")) {
-                    FlowStateScreen(AppLinks.EMPTY, goBack, {}, showPrimaryAction = false)
-                }
-            }
+            )
         }
         if (showMore) {
             ModalBottomSheet(onDismissRequest = { showMore = false }, containerColor = MaterialTheme.colorScheme.background) {

@@ -1,14 +1,7 @@
 <resources>
     <string name="app_name">Master Flow</string>
-    <string name="my_tasks">Задачи</string>
-    <string name="task_1">Задача 1</string>
-    <string name="task_2">Задача 2</string>
-    <string name="task_3">Задача 3</string>
-    <string name="task_not_found">Задача не найдена</string>
     <string name="invalid_link">Некорректная ссылка</string>
-    <string name="back_to_tasks">На главную</string>
     <string name="back">Назад</string>
-    <string name="share_task">Поделиться задачей</string>
     <string name="share">Поделиться</string>
     <string name="share_app">Поделиться приложением</string>
     <string name="home">Главная</string>
@@ -21,7 +14,6 @@
     <string name="today_schedule">Расписание на сегодня</string>
     <string name="view_all">Все</string>
     <string name="appointment_service">%1$s · %2$d мин</string>
-    <string name="task_count">Всего: %1$d</string>
     <string name="schedule">План</string>
     <string name="clients">Клиенты</string>
     <string name="services">Услуги</string>
@@ -35,7 +27,7 @@
     <string name="error_title">Не удалось загрузить день</string>
     <string name="error_message">Не получилось получить данные.\nПопробуйте ещё раз или вернитесь на главную.</string>
     <string name="invalid_title">Ссылка не найдена</string>
-    <string name="invalid_message">Эта ссылка устарела или ведёт к неизвестной задаче. Главная страница доступна по кнопке ниже.</string>
+    <string name="invalid_message">Проверьте адрес ссылки или вернитесь на главную.</string>
     <string name="go_home">На главную</string>
     <string name="retry">Повторить</string>
     <string name="refresh">Обновить данные</string>
@@ -46,4 +38,18 @@
     <string name="clear_search">Очистить поиск</string>
     <string name="search_no_results">Ничего не найдено</string>
     <string name="search_no_results_message">Попробуйте другое имя или очистите поиск.</string>
+    <string name="appointment_details">Запись клиента</string>
+    <string name="appointment_number">Запись №%1$d</string>
+    <string name="appointment_not_found">Запись не найдена</string>
+    <string name="appointment_not_found_message">Этой записи больше нет в расписании. Вернитесь к списку и выберите другую.</string>
+    <string name="detail_loading_title">Загружаем запись</string>
+    <string name="detail_loading_message">Получаем информацию о записи клиента.</string>
+    <string name="detail_error_title">Не удалось загрузить запись</string>
+    <string name="detail_error_message">Попробуйте загрузить данные ещё раз.</string>
+    <string name="detail_service">Услуга</string>
+    <string name="detail_date">Дата</string>
+    <string name="detail_time">Время</string>
+    <string name="detail_duration">Продолжительность</string>
+    <string name="detail_price">Стоимость</string>
+    <string name="duration_minutes">%1$d мин</string>
 </resources>
