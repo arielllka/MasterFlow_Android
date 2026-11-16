@@ -42,4 +42,8 @@
     <string name="empty_day">Пустой день</string>
     <string name="connection_error">Ошибка подключения</string>
     <string name="timeout_message">Загрузка заняла слишком много времени.\nПопробуйте ещё раз.</string>
+    <string name="search_by_client">Поиск по имени</string>
+    <string name="clear_search">Очистить поиск</string>
+    <string name="search_no_results">Ничего не найдено</string>
+    <string name="search_no_results_message">Попробуйте другое имя или очистите поиск.</string>
 </resources>

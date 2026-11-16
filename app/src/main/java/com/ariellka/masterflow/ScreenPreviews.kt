@@ -6,27 +6,32 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.ariellka.masterflow.ui.theme.MasterFlowTheme
 
-@Preview(name = "Главная", widthDp = 412, heightDp = 917)
-@Preview(name = "Тёмная тема", widthDp = 412, heightDp = 917, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(name = "Шрифт 150%", widthDp = 412, heightDp = 917, fontScale = 1.5f)
+@Preview(name = "Главная", group = "Главная", widthDp = 412, heightDp = 917)
+@Preview(name = "Тёмная тема", group = "Главная", widthDp = 412, heightDp = 917, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun DashboardPreview() {
-    MasterFlowApp(null, 0, {}, DashboardState.Content(appointments), {})
+    MasterFlowApp(null, 0, {}, previewDashboardState, {})
 }
 
-@Preview(name = "Загрузка", widthDp = 412, heightDp = 917)
+@Preview(name = "Расписание", group = "План", widthDp = 412, heightDp = 917)
+@Composable
+private fun SchedulePreview() {
+    MasterFlowApp(AppLinks.SCHEDULE_LINK, 0, {}, previewDashboardState, {})
+}
+
+@Preview(name = "Загрузка", group = "Состояния", widthDp = 412, heightDp = 917)
 @Composable
 private fun LoadingPreview() {
-    MasterFlowTheme { FlowStateScreen(AppLinks.LOADING, {}, {}) }
+    MasterFlowApp(null, 0, {}, previewDashboardState.copy(status = DashboardStatus.LOADING), {})
 }
 
-@Preview(name = "Нет записей", widthDp = 412, heightDp = 917)
+@Preview(name = "Нет записей", group = "Состояния", widthDp = 412, heightDp = 917)
 @Composable
 private fun EmptyPreview() {
-    MasterFlowTheme { FlowStateScreen(AppLinks.EMPTY, {}, {}) }
+    MasterFlowApp(null, 0, {}, DashboardUiState(status = DashboardStatus.EMPTY), {})
 }
 
-@Preview(name = "Пустой раздел", widthDp = 412, heightDp = 917)
+@Preview(name = "Пустой раздел", group = "Состояния", widthDp = 412, heightDp = 917)
 @Composable
 private fun EmptyDestinationPreview() {
     MasterFlowTheme {
@@ -36,8 +41,8 @@ private fun EmptyDestinationPreview() {
     }
 }
 
-@Preview(name = "Ошибка ожидания", widthDp = 412, heightDp = 917)
+@Preview(name = "Ошибка ожидания", group = "Состояния", widthDp = 412, heightDp = 917)
 @Composable
 private fun ErrorPreview() {
-    MasterFlowTheme { FlowStateScreen(AppLinks.ERROR, {}, {}, timeoutError = true) }
+    MasterFlowApp(null, 0, {}, DashboardUiState(status = DashboardStatus.ERROR, timedOut = true), {})
 }

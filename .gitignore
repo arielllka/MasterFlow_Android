@@ -31,3 +31,23 @@ keystore.properties
 .DS_Store
 Thumbs.db
 Desktop.ini
+
+# Local notes, lab reports and design references
+*.md
+*.pdf
+*.fig
+/docs/
+/output/
+/tmp/
+
+# Screenshots and exported images
+screenshots/
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+
+# Keep resources and assets that are packaged with the Android app
+!**/src/**/res/**
+!**/src/**/assets/**

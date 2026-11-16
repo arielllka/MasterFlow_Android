@@ -3,14 +3,14 @@ package com.ariellka.masterflow
 import java.time.LocalDate
 import java.time.LocalTime
 
-// Данные главного экрана. Их можно менять здесь, не меняя разметку.
+
 val dashboardDate: LocalDate = LocalDate.now()
 const val dashboardCurrency: String = "\$"
 
 val appointments = listOf(
     Appointment(
         id = 1,
-        clientName = "Анна К.",
+        clientName = "Валерия С.",
         serviceName = "Услуга",
         startTime = LocalTime.of(14, 30),
         durationMinutes = 60,
@@ -24,7 +24,7 @@ val appointments = listOf(
         durationMinutes = 60,
         price = 3
     ),
-    // ID 42 сохранён для существующей ссылки на третью запись.
+
     Appointment(
         id = 42,
         clientName = "Анна К.",

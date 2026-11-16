@@ -4,6 +4,11 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class AppLinksTest {
+    @Test fun scheduleLinksOpenTheSchedule() {
+        listOf(AppLinks.SCHEDULE_LINK, "masterflow://schedule/", "masterflow:///schedule")
+            .forEach { assertEquals(AppLinks.SCHEDULE, AppLinks.resolve(it)) }
+        assertEquals(AppLinks.INVALID, AppLinks.resolve("masterflow://schedule/1"))
+    }
     @Test fun launcherAndHomeLinksOpenHome() {
         listOf(null, "masterflow://home", "masterflow://home/", "masterflow://", "masterflow:///home")
             .forEach { assertEquals(it, AppLinks.HOME, AppLinks.resolve(it)) }
