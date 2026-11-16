@@ -126,13 +126,13 @@ class DashboardViewModelTest {
         val vm = model()
         vm.loadOnce()
         advanceUntilIdle()
-        vm.onAction(DashboardAction.OpenScreen(AppLinks.SCHEDULE))
+        vm.onAction(DashboardAction.OpenScreen(AppDestination.Schedule))
         val first = vm.uiState.value.pendingNavigation!!
-        assertEquals(AppLinks.SCHEDULE, first.destination)
+        assertEquals(AppDestination.Schedule, first.destination)
         vm.onAction(DashboardAction.OpenAppointment(anna.id))
         val second = vm.uiState.value.pendingNavigation!!
         assertTrue(second.id > first.id)
-        assertEquals(AppLinks.taskDestination(anna.id), second.destination)
+        assertEquals(AppDestination.Detail(anna.id), second.destination)
         vm.onAction(DashboardAction.NavigationHandled(first.id))
         assertEquals(second, vm.uiState.value.pendingNavigation)
         vm.onAction(DashboardAction.NavigationHandled(second.id))

@@ -11,10 +11,12 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import kotlin.time.Duration.Companion.milliseconds
@@ -46,7 +48,7 @@ class DashboardViewModel(
             is DashboardAction.OpenScreen -> publishNavigation(action.destination)
             is DashboardAction.OpenAppointment -> {
                 if (_uiState.value.appointments.any { it.id == action.id }) {
-                    publishNavigation(AppLinks.taskDestination(action.id))
+                    publishNavigation(AppDestination.Detail(action.id))
                 }
             }
             is DashboardAction.NavigationHandled -> _uiState.update {
@@ -69,6 +71,7 @@ class DashboardViewModel(
                     old.copy(
                         status = if (records.isEmpty()) DashboardStatus.EMPTY else DashboardStatus.CONTENT,
                         appointments = records,
+                        appointmentsById = records.associateBy { it.id },
                         scheduleAppointments = filterRecords(records, old.searchQuery),
                         appointmentCount = records.size,
                         totalRevenue = records.sumOf { it.price },
@@ -93,7 +96,7 @@ class DashboardViewModel(
         }
     }
 
-    private fun publishNavigation(destination: String) {
+    private fun publishNavigation(destination: AppDestination) {
         val event = DashboardNavigation(++navigationId, destination)
         _uiState.update { it.copy(pendingNavigation = event) }
     }

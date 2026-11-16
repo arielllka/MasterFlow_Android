@@ -62,7 +62,7 @@ class ScheduleTest {
         compose.onNodeWithTag("nav-schedule").performClick()
         compose.onNodeWithTag("schedule-search").performTextInput("Анна")
         compose.onNodeWithTag("schedule-search").performImeAction()
-        compose.onNodeWithTag("appointment-1").assertExists()
+        compose.onNodeWithTag("appointment-2").assertExists()
         compose.onNodeWithTag("schedule-search").performTextReplacement("Несуществующий клиент")
         compose.onNodeWithTag("search-empty").assertExists()
         compose.onNodeWithTag("clear-search").performClick()
@@ -75,13 +75,13 @@ class ScheduleTest {
         compose.onNodeWithTag("nav-schedule").performClick()
         compose.onNodeWithTag("schedule-search").performTextInput("Ан")
         compose.onNodeWithTag("schedule-search").performImeAction()
-        compose.onNodeWithTag("appointment-1").performClick()
-        compose.onNodeWithTag("task-1").assertIsDisplayed()
+        compose.onNodeWithTag("appointment-2").performClick()
+        compose.onNodeWithTag("detail-2").assertIsDisplayed()
         compose.onNodeWithTag("back").performClick()
         compose.activityRule.scenario.recreate()
         waitFor("schedule-screen")
         compose.onNodeWithTag("schedule-search").assertTextContains("Ан")
-        compose.onNodeWithTag("task-1").assertDoesNotExist()
+        compose.onNodeWithTag("detail-2").assertDoesNotExist()
     }
 
     @Test fun bottomIconsGrowWithFontScaleAndKeepAccessibleNames() {

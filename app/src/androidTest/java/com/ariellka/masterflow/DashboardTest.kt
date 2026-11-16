@@ -46,37 +46,37 @@ class DashboardTest {
             )
         }
         val expectedTag = when (val route = AppLinks.resolve(link)) {
-            AppLinks.HOME -> "home-screen"
-            AppLinks.SCHEDULE -> "schedule-screen"
-            AppLinks.INVALID -> "state-invalid"
-            else -> route.replace('/', '-')
+            AppDestination.Home -> "home-screen"
+            AppDestination.Schedule -> "schedule-screen"
+            is AppDestination.Detail -> "detail-${route.appointmentId}"
+            else -> "state-invalid"
         }
         compose.waitUntil(15_000) {
             compose.onAllNodesWithTag(expectedTag).fetchSemanticsNodes().isNotEmpty()
         }
     }
 
-    @Test fun scheduleRowsOpenEmptyScreensAndReturnToSchedule() {
+    @Test fun scheduleRowsOpenDetailsAndReturnToSchedule() {
         waitForHome()
         compose.onNodeWithTag("nav-schedule").performClick()
-        listOf(1, 2, 42).forEach { taskId ->
-            compose.onNodeWithTag("schedule-appointments").performScrollToNode(hasTestTag("appointment-$taskId"))
-            compose.onNodeWithTag("appointment-$taskId").performClick()
-            compose.onNodeWithTag("task-$taskId").assertIsDisplayed()
+        listOf(1, 2, 42).forEach { id ->
+            compose.onNodeWithTag("schedule-appointments").performScrollToNode(hasTestTag("appointment-$id"))
+            compose.onNodeWithTag("appointment-$id").performClick()
+            compose.onNodeWithTag("detail-$id").assertIsDisplayed()
             compose.onNodeWithTag("back").performClick()
             compose.onNodeWithTag("schedule-screen").assertIsDisplayed()
         }
     }
 
-    @Test fun repeatedWarmDeepLinksCanOpenTasksHomeAndInvalidState() {
+    @Test fun repeatedWarmDeepLinksCanOpenDetailsHomeAndInvalidState() {
         waitForHome()
         listOf(1, 2, 42).forEach { id ->
-            sendLink(AppLinks.taskLink(id))
-            compose.onNodeWithTag("task-$id").assertIsDisplayed()
+            sendLink(AppLinks.appointmentLink(id))
+            compose.onNodeWithTag("detail-$id").assertIsDisplayed()
         }
         sendLink(AppLinks.HOME_LINK)
         compose.onNodeWithTag("home-screen").assertIsDisplayed()
-        sendLink("masterflow://task/999")
+        sendLink("masterflow://appointment/nope")
         compose.onNodeWithTag("state-invalid").assertIsDisplayed()
         compose.onNodeWithTag("back").performClick()
         compose.onNodeWithTag("home-screen").assertIsDisplayed()

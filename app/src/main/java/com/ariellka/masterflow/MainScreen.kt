@@ -82,7 +82,7 @@ fun MainScreen(
                                     Modifier.weight(1f).fillMaxHeight())
                             }
                             Button(
-                                onClick = { onAction(DashboardAction.OpenScreen("new-appointment")) },
+                                onClick = { onAction(DashboardAction.OpenScreen(AppDestination.NewAppointment)) },
                                 modifier = Modifier.fillMaxWidth().heightIn(min = FlowSpace.button),
                                 shape = FlowCorners.button
                             ) {
@@ -93,7 +93,7 @@ fun MainScreen(
                         if (nextAppointment != null) {
                             Column(verticalArrangement = Arrangement.spacedBy(FlowSpace.small)) {
                                 SectionHeader(stringResource(R.string.next_appointment), "view-all-next") {
-                                    onAction(DashboardAction.OpenScreen(AppLinks.SCHEDULE))
+                                    onAction(DashboardAction.OpenScreen(AppDestination.Schedule))
                                 }
                                 Surface(onClick = { onAction(DashboardAction.OpenAppointment(nextAppointment.id)) }, shape = FlowCorners.card,
                                     color = MaterialTheme.colorScheme.surfaceVariant) {
@@ -106,7 +106,7 @@ fun MainScreen(
                             }
                         }
                         SectionHeader(stringResource(R.string.today_schedule), "view-all-schedule") {
-                            onAction(DashboardAction.OpenScreen(AppLinks.SCHEDULE))
+                            onAction(DashboardAction.OpenScreen(AppDestination.Schedule))
                         }
                     }
                 }

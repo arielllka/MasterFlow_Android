@@ -21,16 +21,20 @@ import com.ariellka.masterflow.ui.theme.FlowSpace
 import com.ariellka.masterflow.ui.theme.LARGE_FONT_SCALE
 
 @Composable
-internal fun FlowBottomBar(selectedDestination: String = AppLinks.HOME, onNavigate: (String) -> Unit) {
+internal fun FlowBottomBar(
+    selectedDestination: AppDestination = AppDestination.Home,
+    onNavigate: (AppDestination) -> Unit,
+    onMore: () -> Unit = {}
+) {
     val fontScale = LocalDensity.current.fontScale
     val showLabels = fontScale < LARGE_FONT_SCALE
     val iconSize = 24.dp * fontScale
     val tabs = listOf(
-        Triple(AppLinks.HOME, R.string.home, R.drawable.ic_home),
-        Triple(AppLinks.SCHEDULE, R.string.schedule, R.drawable.ic_calendar),
-        Triple("clients", R.string.clients, R.drawable.ic_people),
-        Triple("services", R.string.services, R.drawable.ic_tools),
-        Triple("more", R.string.more, R.drawable.ic_menu)
+        BottomTab(AppDestination.Home, R.string.home, R.drawable.ic_home, "home"),
+        BottomTab(AppDestination.Schedule, R.string.schedule, R.drawable.ic_calendar, "schedule"),
+        BottomTab(AppDestination.Clients, R.string.clients, R.drawable.ic_people, "clients"),
+        BottomTab(AppDestination.Services, R.string.services, R.drawable.ic_tools, "services"),
+        BottomTab(null, R.string.more, R.drawable.ic_menu, "more")
     )
     Box(Modifier.fillMaxWidth().navigationBarsPadding().padding(horizontal = FlowSpace.page, vertical = FlowSpace.small),
         contentAlignment = Alignment.Center) {
@@ -40,17 +44,19 @@ internal fun FlowBottomBar(selectedDestination: String = AppLinks.HOME, onNaviga
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
         ) {
             Row(Modifier.padding(FlowSpace.small), verticalAlignment = Alignment.CenterVertically) {
-                tabs.forEach { (route, title, icon) ->
+                tabs.forEach { (route, title, icon, tag) ->
                     val label = stringResource(title)
                     Column(
                         Modifier.weight(1f).heightIn(min = FlowSpace.button)
-                            .selectable(route == selectedDestination, role = Role.Tab) { onNavigate(route) }
-                            .testTag("nav-$route").padding(vertical = FlowSpace.tiny),
+                            .selectable(route == selectedDestination, role = Role.Tab) {
+                                if (route == null) onMore() else onNavigate(route)
+                            }
+                            .testTag("nav-$tag").padding(vertical = FlowSpace.tiny),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(FlowSpace.tiny, Alignment.CenterVertically)
                     ) {
                         Icon(painterResource(icon), contentDescription = if (showLabels) null else label,
-                            modifier = Modifier.size(iconSize).testTag("nav-icon-$route"))
+                            modifier = Modifier.size(iconSize).testTag("nav-icon-$tag"))
                         if (showLabels) {
                             Text(label, style = MaterialTheme.typography.labelSmall, textAlign = TextAlign.Center)
                         }
@@ -60,3 +66,10 @@ internal fun FlowBottomBar(selectedDestination: String = AppLinks.HOME, onNaviga
         }
     }
 }
+
+private data class BottomTab(
+    val destination: AppDestination?,
+    val title: Int,
+    val icon: Int,
+    val tag: String
+)

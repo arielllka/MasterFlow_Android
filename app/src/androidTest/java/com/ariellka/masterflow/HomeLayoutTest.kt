@@ -32,11 +32,11 @@ class HomeLayoutTest {
                 }
             }
         }
-        compose.onNodeWithTag("open-appointment-3").assertIsDisplayed()
+        compose.onNodeWithTag("open-appointment-42").assertIsDisplayed()
         compose.runOnIdle { height = 650.dp }
-        compose.onNodeWithTag("open-appointment-3").assertIsNotDisplayed()
+        compose.onNodeWithTag("open-appointment-42").assertIsNotDisplayed()
         compose.runOnIdle { height = 1100.dp }
-        compose.onNodeWithTag("open-appointment-3").assertIsDisplayed()
+        compose.onNodeWithTag("open-appointment-42").assertIsDisplayed()
     }
 
     @Test fun aTallViewportCanShowMoreThanThreeRows() {

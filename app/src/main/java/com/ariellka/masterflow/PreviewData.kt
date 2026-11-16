@@ -12,6 +12,7 @@ internal val previewDashboardState = DashboardUiState(
     status = DashboardStatus.CONTENT,
     date = LocalDate.of(2026, 11, 9),
     appointments = listOf(previewAnna, previewMaria, previewOlga),
+    appointmentsById = listOf(previewAnna, previewMaria, previewOlga).associateBy { it.id },
     scheduleAppointments = listOf(previewAnna, previewMaria, previewOlga),
     appointmentCount = 3,
     totalRevenue = 9,
