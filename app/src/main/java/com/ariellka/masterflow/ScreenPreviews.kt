@@ -19,6 +19,16 @@ private fun SchedulePreview() {
     MasterFlowApp(AppLinks.SCHEDULE_LINK, 0, {}, previewDashboardState, {})
 }
 
+@Preview(name = "Нет результатов", group = "План", widthDp = 412, heightDp = 917)
+@Composable
+private fun EmptySearchPreview() {
+    MasterFlowApp(AppLinks.SCHEDULE_LINK, 0, {}, previewDashboardState.copy(
+        status = DashboardStatus.EMPTY_SEARCH,
+        searchQuery = "Иван",
+        scheduleAppointments = emptyList()
+    ), {})
+}
+
 @Preview(name = "Запись клиента", group = "План", widthDp = 412, heightDp = 917)
 @Composable
 private fun AppointmentDetailPreview() {

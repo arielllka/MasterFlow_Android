@@ -37,7 +37,10 @@
     <string name="search_by_client">Поиск по имени</string>
     <string name="clear_search">Очистить поиск</string>
     <string name="search_no_results">Ничего не найдено</string>
-    <string name="search_no_results_message">Попробуйте другое имя или очистите поиск.</string>
+    <string name="search_no_results_message">Попробуйте другое имя, измените услугу или сбросьте фильтры.</string>
+    <string name="filter_service">Услуга</string>
+    <string name="all_services">Все услуги</string>
+    <string name="clear_filters">Сбросить фильтры</string>
     <string name="appointment_details">Запись клиента</string>
     <string name="appointment_number">Запись №%1$d</string>
     <string name="appointment_not_found">Запись не найдена</string>

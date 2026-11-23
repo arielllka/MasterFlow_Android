@@ -1,6 +1,8 @@
 package com.ariellka.masterflow
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -9,6 +11,10 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -75,6 +81,11 @@ fun ScheduleScreen(
                 keyboardActions = KeyboardActions(onSearch = { keyboard?.hide() })
             )
 
+            ServiceFilter(uiState.services, uiState.selectedServiceId) {
+                keyboard?.hide()
+                onAction(DashboardAction.ServiceChanged(it))
+            }
+
             when (uiState.status) {
                 DashboardStatus.LOADING -> FlowStateScreen(
                     AppLinks.LOADING, onBack, {}, Modifier.weight(1f), showBackButton = false
@@ -87,47 +98,85 @@ fun ScheduleScreen(
                     AppLinks.EMPTY, onBack, {}, Modifier.weight(1f),
                     showPrimaryAction = false, showBackButton = false
                 )
-                DashboardStatus.CONTENT -> {
-                    if (uiState.scheduleAppointments.isEmpty()) {
-                        Column(
-                            Modifier.weight(1f).fillMaxWidth().testTag("search-empty"),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(FlowSpace.medium, Alignment.CenterVertically)
-                        ) {
-                            Text(stringResource(R.string.search_no_results), style = MaterialTheme.typography.titleMedium)
-                            Text(stringResource(R.string.search_no_results_message),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant)
+                DashboardStatus.EMPTY_SEARCH -> {
+                    Column(
+                        Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()).testTag("search-empty"),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(FlowSpace.medium, Alignment.CenterVertically)
+                    ) {
+                        Text(stringResource(R.string.search_no_results), style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.search_no_results_message),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        TextButton(onClick = { onAction(DashboardAction.ClearFilters) }) {
+                            Text(stringResource(R.string.clear_filters))
                         }
-                    } else {
-                        LazyColumn(
-                            modifier = Modifier.weight(1f).fillMaxWidth().testTag("schedule-appointments"),
-                            state = listState,
-                            verticalArrangement = Arrangement.spacedBy(FlowSpace.medium),
-                            contentPadding = PaddingValues(bottom = FlowSpace.small)
-                        ) {
-                            items(uiState.scheduleAppointments, key = { it.id }) { appointment ->
-                                Surface(
-                                    onClick = { onAction(DashboardAction.OpenAppointment(appointment.id)) },
-                                    modifier = Modifier.fillMaxWidth().testTag("appointment-${appointment.id}"),
-                                    shape = FlowCorners.card,
-                                    color = MaterialTheme.colorScheme.surfaceVariant
-                                ) {
-                                    Column(Modifier.padding(FlowSpace.page),
-                                        verticalArrangement = Arrangement.spacedBy(FlowSpace.small)) {
-                                        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                                            Text(appointment.startTime.format(DateTimeFormatter.ofPattern("HH:mm")),
-                                                style = MaterialTheme.typography.labelLarge)
-                                            Spacer(Modifier.weight(1f))
-                                            Text("${uiState.currency}${appointment.price}", style = MaterialTheme.typography.labelLarge)
-                                        }
-                                        AppointmentRow(appointment)
+                    }
+                }
+                DashboardStatus.CONTENT -> {
+                    LazyColumn(
+                        modifier = Modifier.weight(1f).fillMaxWidth().testTag("schedule-appointments"),
+                        state = listState,
+                        verticalArrangement = Arrangement.spacedBy(FlowSpace.medium),
+                        contentPadding = PaddingValues(bottom = FlowSpace.small)
+                    ) {
+                        items(uiState.scheduleAppointments, key = { it.id }) { appointment ->
+                            Surface(
+                                onClick = { onAction(DashboardAction.OpenAppointment(appointment.id)) },
+                                modifier = Modifier.fillMaxWidth().testTag("appointment-${appointment.id}"),
+                                shape = FlowCorners.card,
+                                color = MaterialTheme.colorScheme.surfaceVariant
+                            ) {
+                                Column(Modifier.padding(FlowSpace.page),
+                                    verticalArrangement = Arrangement.spacedBy(FlowSpace.small)) {
+                                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                                        Text(appointment.startTime.format(DateTimeFormatter.ofPattern("HH:mm")),
+                                            style = MaterialTheme.typography.labelLarge)
+                                        Spacer(Modifier.weight(1f))
+                                        Text("${uiState.currency}${appointment.price}", style = MaterialTheme.typography.labelLarge)
                                     }
+                                    AppointmentRow(appointment)
                                 }
                             }
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ServiceFilter(options: List<Service>, selectedId: Int, onSelected: (Int) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    val selectedName = options.find { it.id == selectedId }?.name ?: stringResource(R.string.all_services)
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        OutlinedTextField(
+            value = selectedName,
+            onValueChange = {},
+            readOnly = true,
+            singleLine = true,
+            label = { Text(stringResource(R.string.filter_service)) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+            shape = FlowCorners.button,
+            modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                .fillMaxWidth().testTag("service-filter")
+        )
+        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.all_services)) },
+                onClick = { expanded = false; onSelected(0) }
+            )
+            options.forEach { service ->
+                DropdownMenuItem(
+                    text = { Text(service.name) },
+                    onClick = { expanded = false; onSelected(service.id) }
+                )
             }
         }
     }

@@ -50,7 +50,7 @@ fun AppointmentDetailScreen(
                     DashboardStatus.EMPTY -> FlowStateScreen(
                         AppLinks.EMPTY, onBack, {}, showPrimaryAction = false, showBackButton = false
                     )
-                    DashboardStatus.CONTENT -> {
+                    DashboardStatus.CONTENT, DashboardStatus.EMPTY_SEARCH -> {
                         if (appointment == null) {
                             FlowStateScreen(AppLinks.NOT_FOUND, onBack, {},
                                 showPrimaryAction = false, showBackButton = false)

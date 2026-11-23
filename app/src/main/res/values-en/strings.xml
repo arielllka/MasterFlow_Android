@@ -38,7 +38,10 @@
     <string name="search_by_client">Search by name</string>
     <string name="clear_search">Clear search</string>
     <string name="search_no_results">No appointments found</string>
-    <string name="search_no_results_message">Try another name or clear the search.</string>
+    <string name="search_no_results_message">Try another name, select a different service, or reset the filters.</string>
+    <string name="filter_service">Service</string>
+    <string name="all_services">All services</string>
+    <string name="clear_filters">Reset filters</string>
     <string name="appointment_details">Appointment Details</string>
     <string name="appointment_number">Appointment #%1$d</string>
     <string name="appointment_not_found">Appointment Not Found</string>

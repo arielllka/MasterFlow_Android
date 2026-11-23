@@ -19,7 +19,7 @@ val appointments = listOf(
     Appointment(
         id = 2,
         clientName = "Анна К.",
-        serviceName = "Услуга",
+        serviceName = "Консультация",
         startTime = LocalTime.of(15, 30),
         durationMinutes = 60,
         price = 3
@@ -44,7 +44,7 @@ val appointments = listOf(
     Appointment(
         id = 5,
         clientName = "Анна К.",
-        serviceName = "Услуга",
+        serviceName = "Консультация",
         startTime = LocalTime.of(18, 30),
         durationMinutes = 60,
         price = 3

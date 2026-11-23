@@ -14,6 +14,7 @@ internal val previewDashboardState = DashboardUiState(
     appointments = listOf(previewAnna, previewMaria, previewOlga),
     appointmentsById = listOf(previewAnna, previewMaria, previewOlga).associateBy { it.id },
     scheduleAppointments = listOf(previewAnna, previewMaria, previewOlga),
+    services = services,
     appointmentCount = 3,
     totalRevenue = 9,
     nextAppointment = previewAnna

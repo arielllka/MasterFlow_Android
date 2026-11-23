@@ -63,7 +63,7 @@ fun MasterFlowApp(
             contentWindowInsets = WindowInsets.safeDrawing,
             containerColor = MaterialTheme.colorScheme.background,
             bottomBar = {
-                if ((destination == AppDestination.Home && uiState.status == DashboardStatus.CONTENT) ||
+                if ((destination == AppDestination.Home && uiState.status in listOf(DashboardStatus.CONTENT, DashboardStatus.EMPTY_SEARCH)) ||
                     destination == AppDestination.Schedule) {
                     FlowBottomBar(
                         selectedDestination = destination,
@@ -90,7 +90,7 @@ fun MasterFlowApp(
                                 AppLinks.EMPTY, onExit,
                                 { onAction(DashboardAction.OpenScreen(AppDestination.NewAppointment)) }
                             )
-                            DashboardStatus.CONTENT -> MainScreen(
+                            DashboardStatus.CONTENT, DashboardStatus.EMPTY_SEARCH -> MainScreen(
                                 uiState = uiState,
                                 onAction = onAction,
                                 modifier = Modifier.fillMaxSize().testTag("home-screen"),

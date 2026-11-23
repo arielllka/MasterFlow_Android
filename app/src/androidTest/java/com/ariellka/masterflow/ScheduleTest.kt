@@ -62,10 +62,16 @@ class ScheduleTest {
         compose.onNodeWithTag("nav-schedule").performClick()
         compose.onNodeWithTag("schedule-search").performTextInput("Анна")
         compose.onNodeWithTag("schedule-search").performImeAction()
+        compose.waitUntil(15_000) {
+            compose.onAllNodesWithTag("appointment-1").fetchSemanticsNodes().isEmpty() &&
+                compose.onAllNodesWithTag("appointment-2").fetchSemanticsNodes().isNotEmpty()
+        }
         compose.onNodeWithTag("appointment-2").assertExists()
         compose.onNodeWithTag("schedule-search").performTextReplacement("Несуществующий клиент")
+        waitFor("search-empty")
         compose.onNodeWithTag("search-empty").assertExists()
         compose.onNodeWithTag("clear-search").performClick()
+        waitFor("schedule-appointments")
         compose.onNodeWithTag("schedule-search").assertTextContains("")
         compose.onNodeWithTag("schedule-appointments").assertExists()
     }
